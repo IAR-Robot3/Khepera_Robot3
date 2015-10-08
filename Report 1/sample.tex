@@ -30,7 +30,7 @@
 %%%%%%%%%%%%
 \begin{document}
 
-\title{IAR Reort\\Task 1}
+\title{Intelligent Autonomous Robotics Report\\Task 1}
 \author{Babak Esmaeili, David Fullerton}
 \maketitle
 
@@ -41,12 +41,12 @@ We have written a program for a Khepera robot that allows the robot to following
 
 \section{Introduction}
 %%%%%%%%%%%%%%%
-The task was to design a controller for a Khepera robot that would navigate an arena while avoiding collisions with obstacles. If possible the robot would tend to follow long walls and avoid following the edge of smaller obstacles. We approached this by deciding the robot would favour keeping an object a set distance away from its right hand side. As for how the robot would decide if what it sensed was a wall or small object we were unsure how to approach this. One idea was that when a sensor received a reading above a threshold we would also check the adjacent sensors as to what their values were. If they were also above a threshold then it would suggest a wall, if not then a small object. We didn’t use this as it would only work for very small objects and for the front middle four sensors. We were late to start this project and so referred to a previous course, IVR, and course work we had done in the past to help our approach to this task.
+The task was to design a controller for a Khepera robot that would navigate an arena while avoiding collisions with obstacles. If possible the robot would tend to follow long walls and avoid following the edge of smaller obstacles. We approached this by deciding the robot would favour keeping an object a set distance away from its right hand side. As for how the robot would decide if what it sensed was a wall or small object we were unsure how to approach this. One idea was that when a sensor received a reading above a threshold we would also check the adjacent sensors as to what their values were. If they were also above a threshold then it would suggest a wall, if not then a small object. We did not use this as it would only work for very small objects and for the front middle four sensors. We were late to start this project and so referred to a previous course, IVR, and course work we had done in the past to help our approach to this task.
 
 
 \section{Methods}
 %%%%%%%%%%%%%%%%%%%
-First, we had decide the value for the distance threshold, which would determine robots closeness to the wall. The most important IR sensor in our case is number 6, which is the sensor that is used to measure the closeness to the wall. The robot’s distance threshold is set the threshold to 150. If it detects a wall (or an obstacle) close to it, it will go to PID control in order to maintain the distance threshold to the wall.\\
+First, we had to decide the value for the distance threshold, which would determine the robot's closeness to the wall. The most important IR sensor in our case is IR sensor number 6, which is the sensor that is used to measure its closeness to the wall. The robot's distance threshold is set to 120. If it detects a wall (or possibly an obstacle) close to it, PID control takes over to maintain the distance threshold to that wall (see algorithm 1). As we are only using IR sensor number 6 to follow the wall, our robot is only able to follow the wall existing on its right side, resulting in a counter clockwise path. For detecting corners, we are using IR sensors 3, 4, and 5. If these three sensors pick up a value above the distance threshold, the robot turns left on the spot. For detecting obstacles on its left side, we are using IR sensors 1 and 2. If these two IR sensors pick up a value above 150, the robot's path starts curving to the right. A general view of how our robot moves around can be observed below: 
 
 \begin{center}
 \begin{tabular}{ |c| } 
@@ -54,46 +54,61 @@ First, we had decide the value for the distance threshold, which would determine
  \textbf{Main Controller Algorithm} \\
  \hline
  \\
- If haven't detected the wall $=>$ Keep going Straight \\ \\
- If reached a corner $=>$ Turn left on the spot \\ \\
- If detecting an obstacle on the left side $=>$ Curve to the right \\ \\
- Else go to PID control and maintain the distance to the wall \\ \\
+ \textbf{If} have not detected a wall yet $=>$ Keep going straight \\ \\
+ \textbf{If} reach a corner $=>$ Turn left on the spot \\ \\
+ \textbf{If} detecting an obstacle on the left side $=>$ Curve to the right \\ \\
+ \textbf{Else} Have found a wall, but no corner or obstacle detected $=>$ \\ Go to PID control and follow the wall while maintaining \\ the desired distance to the wall \\ \\
  \hline
 \end{tabular}
 \end{center}
+As explained in the previous paragraph, we have decided to use 'turning on the spot' for the corners and 'curving paths' for obstacle avoidance. Turning on the spot in the corners is the more sensible thing to do, since following a curved path might get the robot stuck at the edge of the front wall. However, for obstacle avoidance, following a curved path makes more sense, since it looks more realistic and also it faster than turning on the spot. \\
 
+\begin{center}
 \begin{algorithm}                      % enter the algorithm environment
 \caption{PID Controller}          % give the algorithm a caption
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
 
-    \WHILE{$N \neq 0$}
-        \IF{Obstacle on left detected}
-        
-            \STATE $X \Leftarrow X \times X$
-            \STATE $N \Leftarrow N / 2$
-        \ELSE[$N$ is odd]
-            \STATE $y \Leftarrow y \times X$
-            \STATE $N \Leftarrow N - 1$
-        \ENDIF
-    \ENDWHILE
+    \STATE $Kp = 9/default\_dist$ \Comment{  \% Parameter for P control}
+    \STATE $Ki = 2/default\_dist$ \Comment{ \% Parameter for PI control}
+    \STATE $Kd = -4/default\_dist$ \Comment{ \% Parameter for PD control}
+    \STATE 
+    \STATE $error = default\_dist - dist$ \Comment{ \% For P Control}
+    \STATE
+    \STATE $previous\_errors = [error, previous\_errors]$ \Comment{ \% For PI Control}
+    \STATE $int = trapz([1:100], previous\_errors)/100$ 
+    \STATE
+    \STATE $dev = diff(previous\_errors)$ \Comment{ \% For PD Control}
+    \STATE $dev = mean(dev)$
+    \STATE
+    \STATE $v = floor(Kp*err + Ki*int + Kd*dev)$ \Comment{ \% Do final calculation}
+    \STATE $set \ v \ between \ [-7,7]$
+    \STATE $set\_speeds(current\_speed+v, current\_speed-v)$
 \end{algorithmic}
 \end{algorithm}
-
-One challenge we faced during the experiments was the buffering problem. Due to some power problems and possibly sending too many commands, our robot crashes. The reason for that is sending unwanted command to the robot but without printing it or in other words keeping the buffer clean. First we made sure that whenever we are about to set the speed wheels same as the previous loop, we avoid sending that command again and simply go to the next loop. We are also pausing the program for 0.1 s at the end of the loop to make sure there is enough time spaces between commands.    
+\end{center}\\
+One challenge we faced during the experiments was the buffering problem. Due to occasional power problems and possibly sending too many commands, our robot crashes from time to tome. The reason for that is unwanted commands being sent to the robot without printing them, or in other words, keeping the buffer clear. First we made sure that whenever we are about to set the speed same as the previous loop, we avoid sending that command again and simply go to the next loop. We are also pausing the program for 0.1s at the end of every loop to make sure there is enough time spaces between commands.    
 
 \section{Results}
 %%%%%%%%%%%%%%%%
-Our robot is able to follow the wall properly and avoid any obstacles both on its left side and right side. In trials, each trial including on full round with some obstacle in the way, it got stuck n times, next to a grey object. We observed that it detects the darker objects, much later than the lighter objects. In other words, it must be very close to the dark object in order to detect it, which is the moment that there is sudden huge change in the sensor values. The two main problems it faced during problems was the occasional crashing, and wiggling too much around grey or dark objects due to the delay in detecting them.\\\\
-
-We managed to reduce the crashing by the method described in the previous section. The reason for the struggle in following dark walls was the PID control. In the first approach only PD control was used, as we observed the robot doing a reasonable job. In order to reduce the wiggling with the grey objects, we increased the constant multipliers for D and I parameter. \\
-We have experimented obstacle avoidance and wall following using both “Turning on the spot” method and “Curved path” method. We observed that the using curved path performs quite better than turning right at the spot. Using curved turning, our robot only got syck n times, while using “turning on the spot” method, it got stuck m times. In general, curved paths are better than turning on the spot, as a fluid motion is more desirable and turning on the spot slows down the movement.
+Our robot is able to follow the wall properly and avoid any obstacles both on its left side and right side. In 10 trials, each trial including one full path around the arena with some obstacle in the way, it got stuck 2 times next to a grey obstacle. We observed that it detects the darker objects, much later than the lighter objects. In other words, it must be very close to the dark object in order to detect it, which is the moment that there is sudden huge change in the sensor values. The two main problems it faced during problems was the occasional crashing, and wiggling too often around grey or darker objects due to the delay in detecting them.\\\\
+We managed to reduce the crashing by the method described in the previous section. The reason for the struggle in following dark walls was the PID control. In the first approach only PD control was used, as we observed the robot doing a reasonable job even without the 'I' component. In order to reduce the wiggling with the grey objects, we introduced PID control and increased the constant multipliers for D and I parameter. We have experimented obstacle avoidance and wall following using both “Turning on the spot” method and “Curved path” method. These experiments proved our hypothesis about turning on the spot in the corners and following a curved path for obstacle avoidance. We did 5 trials for testing both scenarios. A summary of the results can be observed below:\\
+\begin{center}
+\begin{tabular}{ |c|c|c| }
+ \hline
+  Number of times it got stuck & Turning on the spot & Curving \\ 
+ \hline
+ Corners & 0 & 2 \\ 
+ Obstacle Avoidance & 1 & 1 \\
+ \hline
+\end{tabular}
+\end{center}
 
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%
-One improvement that can be done is giving the robot a side to follow. At the moment, it always follows the wall clockwise, even if the initial situation is one where following anti-clockwise is easier and more sensible. We can turn the other way around by using IR sensor 1 instead of IR sensor 6. We can make side an argument, or even better. we can compare the sensor values from both sides and check which side the wall is and then follow the way which is more sensible. \\\\
-
-If the robot is positioned in the center of the arena (with some obstacles in the middle), Ideally, if it detects an obstacle, it should go around it and then go straight until it reaches the wall and then following the wall. However, what occurs at the moments is the robot circling that obstacle and treating it as the wall. In other words, the robot cannot differentiate between an obstacle and the wall. One possible solution to overcome this problem is odometry. By tracking its position, if the robot is reaching the same position in a short amount of time, it can conclude that the object next to it is an obstacle and not the wall. Thus, it can keep going straight after one turn until it finds the wall.
+The end result of the controller was that the robot would drive until it found and object, then turn left and following the edge of that object, keeping the object on its right side. While following the robot would still avoid obstacles that blocked its path. Our robot was successful in keeping a set distance away from the object it had found and was competent and avoiding collisions. However due to the reliance on IR sensor the robot occasionally got too close to grey and dark coloured object. Also reflective objects may have been an issue but this was not tested fully.\\\\
+One improvement that can be done is giving the robot a side to follow. At the moment, it always follows the wall clockwise, even if the initial situation is one where following  a anti clockwise is more sensible. We can reverse this by using IR sensor 1 instead of IR sensor 6. We can make side an argument, or even better, we can compare the sensor values from both sides and check which side the wall is and then follow the way which would be easier. \\\\
+If the robot is positioned in the center of the arena ,Ideally, if it detects an obstacle, it should go around it and then go straight until it reaches the wall and then follow the wall. However, what occurs at the moments is the robot circling that obstacle and treating it as the wall. In other words, the robot cannot differentiate between an obstacle and the wall. One possible solution to overcome this problem is odometry. By tracking its position, if the robot is reaching the same position in a short amount of time, it can conclude that the object next to it is an obstacle and not the wall. Thus, it can keep going straight after one turn until it finds the wall.
 
 \section{Appendix}
 %%%%%%%%%%%%%%%%%%%%
