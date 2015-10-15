@@ -69,24 +69,24 @@ As explained in the previous paragraph, we have decided to use 'turning on the s
 \label{alg1}                           % and a label for \ref{} commands later in the document
 \begin{algorithmic}                    % enter the algorithmic environment
 
-    \STATE $Kp = 9/default\_dist$ \Comment{  \% Parameter for P control}
-    \STATE $Ki = 2/default\_dist$ \Comment{ \% Parameter for PI control}
-    \STATE $Kd = -4/default\_dist$ \Comment{ \% Parameter for PD control}
+    \STATE $Kp = 9/default\_dist$ \Comment{ \% Parameter for P control}
+    \STATE $Ki = 2/default\_dist$ \COMMENT \% Parameter for PI control
+    \STATE $Kd = -4/default\_dist$ \COMMENT \% Parameter for PD control
     \STATE 
-    \STATE $error = default\_dist - dist$ \Comment{ \% For P Control}
+    \STATE $error = default\_dist - dist$ \COMMENT \% For P Control
     \STATE
-    \STATE $previous\_errors = [error, previous\_errors]$ \Comment{ \% For PI Control}
+    \STATE $previous\_errors = [error, previous\_errors]$ \COMMENT \% For PI Control
     \STATE $int = trapz([1:100], previous\_errors)/100$ 
     \STATE
-    \STATE $dev = diff(previous\_errors)$ \Comment{ \% For PD Control}
+    \STATE $dev = diff(previous\_errors)$ \COMMENT \% For PD Control
     \STATE $dev = mean(dev)$
     \STATE
-    \STATE $v = floor(Kp*err + Ki*int + Kd*dev)$ \Comment{ \% Do final calculation}
+    \STATE $v = floor(Kp*err + Ki*int + Kd*dev)$ \COMMENT \% Do final calculation
     \STATE $set \ v \ between \ [-7,7]$
     \STATE $set\_speeds(current\_speed+v, current\_speed-v)$
 \end{algorithmic}
 \end{algorithm}
-\end{center}\\
+\end{center}
 One challenge we faced during the experiments was the buffering problem. Due to occasional power problems and possibly sending too many commands, our robot crashes from time to tome. The reason for that is unwanted commands being sent to the robot without printing them, or in other words, keeping the buffer clear. First we made sure that whenever we are about to set the speed same as the previous loop, we avoid sending that command again and simply go to the next loop. We are also pausing the program for 0.1s at the end of every loop to make sure there is enough time spaces between commands.    
 
 \section{Results}
