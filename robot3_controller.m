@@ -160,7 +160,16 @@ while 1
   
   x = x + 0.5*(vleft + vright)*cos(angle)
   y = y + 0.5*(vleft + vright)*sin(angle)
-  angle = angle - 0.5*(vleft - vright)/(0.052)
+  angle = angle - 0.5*abs(vleft - vright)/(0.052)
+
+  if angle < 0
+    angle = angle + 2*pi
+  end
+
+  factor_of_2pi = angle/(2*pi);
+  if factor_of_2pi > 1
+    angle = angle - (floor(factor_of_2pi) * 2 * pi);
+  end
 
   pause(0.1);
 end
