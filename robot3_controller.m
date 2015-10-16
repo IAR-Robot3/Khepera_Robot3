@@ -163,7 +163,8 @@ while 1
   angle = angle - 0.5*abs(vleft - vright)/(0.052)
 
   if angle < 0
-    angle = angle + 2*pi
+    multiple_of_2pi = abs(floor(angle/(2*pi)));
+    angle = angle + multiple_of_2pi*2*pi;
   end
 
   factor_of_2pi = angle/(2*pi);
