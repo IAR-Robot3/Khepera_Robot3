@@ -6,7 +6,7 @@ direction = 'None';        % Direction for the current frame
 speed = 4;                 % General speed of the robot.
 default_dist = 120;        % Closer to wall <=> Bigger number
 Kp = 9/default_dist;      % Parameter for P control
-Ki = 0 %-2/default_dist;       % Parameter for PI control
+Ki = -2/default_dist;       % Parameter for PI control
 Kd = 4/default_dist;      % Parameter for PD control
 prev_errors = zeros(1,100); % Used for PI control
 steps = 1:length(prev_errors);
@@ -29,6 +29,8 @@ returned = 0;              %Returned to original position
 delete(instrfindall)
 s = openConnection         %Open connection to khepra bot
 
+setCounts(s,0,0);
+
 % Calling MATLAB desktop versionwb_differential_wheels_set_speed(1, -1);
 desktop;
 
@@ -36,6 +38,17 @@ desktop;
 % Perform simulation steps of TIME_STEP milliseconds
 while 1
   sensor_values = readIR(s)
+  counts = readCounts(s);
+  left = counts(1)*0.00008/0.1;
+  right = counts(2)*0.00008/0.1;
+
+  new_position = odometery(x,y,angle,left,right);
+
+  x = new_position(1);
+  y = new_position(2);
+  angle = new_position(3)
+
+  %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
 
   % Get distance to wall on the right
   dist = sensor_values(6);
@@ -74,9 +87,11 @@ while 1
     direction = 'PID Control';
   end
 
+
+  %Why arent we flooring speed/2 and speed/3?
   if strcmp(direction, 'Straight')
     if ~(current_motion(1) == speed && current_motion(2) == speed)
-      go(s, speed);
+      %go(s, speed);
       disp('Straight!')
       vleft = speed;
       vright = speed;
@@ -84,7 +99,7 @@ while 1
     end
   elseif strcmp(direction, 'Left Turn')
     if ~(current_motion(1) == -speed && current_motion(2) == speed)
-      setSpeeds(s, -speed, speed)
+      %setSpeeds(s, -speed, speed)
       vleft = -speed;
       vright = speed;
       disp('Left Turn!')
@@ -92,7 +107,7 @@ while 1
     end
   elseif strcmp(direction, 'Right Turn')
     if ~(current_motion(1) == speed && current_motion(2) == -speed)
-      setSpeeds(s, speed, -speed)
+      %setSpeeds(s, speed, -speed)
       vleft = speed;
       vright = -speed;
       disp('Right Turn!')
@@ -100,7 +115,7 @@ while 1
     end
   elseif strcmp(direction, 'Left Curve')
     if ~(current_motion(1) == speed/2 && current_motion(2) == speed)
-      setSpeeds(s, speed/2, speed)
+      %setSpeeds(s, speed/2, speed)
       vleft = speed/2;
       vright = speed;
       disp('Left Curve!')
@@ -108,7 +123,7 @@ while 1
     end
   elseif strcmp(direction, 'Right Curve')
     if ~(current_motion(1) == speed && current_motion(2) == speed/2)
-      setSpeeds(s, speed, speed/2)
+      %setSpeeds(s, speed, speed/2)
       vleft = speed;
       vright = speed/2;
       disp('Right Curve!')
@@ -116,7 +131,7 @@ while 1
     end
   elseif strcmp(direction, 'Stop')
     if ~(current_motion(1) == 0 && current_motion(2) == 0)
-      go(s,0)
+      %go(s,0)
       disp('Stop!')
       vleft = 0;
       vright = 0;
@@ -143,7 +158,7 @@ while 1
       end
 
       if ~(current_motion(1) == speed+v && current_motion(2) == speed+v)
-        setSpeeds(s, speed+v, speed-v);
+        %setSpeeds(s, speed+v, speed-v);
         current_motion = [speed+v,speed-v];
         vleft = speed+v;
         vright = speed-v;
@@ -153,26 +168,19 @@ while 1
       disp(['Something wrong! Recieved command: ' direction])
   end
 
+  setCounts(s,0,0);
+
+  [vleft, vright]
+  setSpeeds(s, vleft, vright);
+
   n = n + 1;
 
-  vleft = vleft * 0.001;
-  vright = vright * 0.001;
-  
-  x = x + 0.5*(vleft + vright)*cos(angle)
-  y = y + 0.5*(vleft + vright)*sin(angle)
-  angle = angle - 0.5*abs(vleft - vright)/(0.052)
-
-  if angle < 0
-    multiple_of_2pi = abs(floor(angle/(2*pi)));
-    angle = angle + multiple_of_2pi*2*pi;
-  end
-
-  factor_of_2pi = angle/(2*pi);
-  if factor_of_2pi > 1
-    angle = angle - (floor(factor_of_2pi) * 2 * pi);
-  end
 
   pause(0.1);
+
+
+
 end
+
 go(s, 0);
 disp('Stop!')
