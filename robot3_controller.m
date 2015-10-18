@@ -15,6 +15,7 @@ n = 0;                     %Used to count instructions
 current_motion = [0,0];    %Current motion of bot
 
 % Variables for Odometry
+go_home = 0;		   %This is set to 1 when it is time to go home
 x = 0;                     %x relative to original position
 y = 0;                     %y relative to original position
 angle = 0;                 %angle relative to original position
@@ -38,22 +39,29 @@ desktop;
 
 % Main loop:
 % Perform simulation steps of TIME_STEP milliseconds
-while 1
+tic;
+while ~strcmp(direction, 'Stop') 
   sensor_values = readIR(s);
   counts = readCounts(s);
-  left = (counts(1)-old_count_left)*0.0001/0.1;
-  right = (counts(2)-old_count_right)*0.0001/0.1;
+  left = (counts(1)-old_count_left)*0.0001/0.01;
+  right = (counts(2)-old_count_right)*0.0001/0.01;
 
   new_position = odometery(x,y,angle,left,right);
 
   x = new_position(1);
   y = new_position(2);
   angle = new_position(3)
+  [x,y]
 
   %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
 
   % Get distance to wall on the right
   dist = sensor_values(6);
+
+  %Check how much time has past and if it is time to go home
+  if toc >= 60 
+    go_home = 1
+  end
 
   %Before an object is found, move forwards
   if ~found
@@ -84,9 +92,12 @@ while 1
     
     found = 1;
 
-  % If there are no obstacles - go to PID control
-  elseif found 
+  % If there are no obstacles and we are not going home - go to PID control
+  elseif found && ~go_home
     direction = 'PID Control';
+
+  elseif go_home
+   direction = home_direction(y,x,angle);
   end
 
 
@@ -180,11 +191,10 @@ while 1
   n = n + 1;
 
 
-  pause(0.1);
+  pause(0.01);
 
 
 
 end
 
-go(s, 0);
-disp('Stop!')
+disp('Finished!')

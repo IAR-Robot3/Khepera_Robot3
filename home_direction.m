@@ -10,7 +10,7 @@ function direction = home_direction(x,y,bot_angle)
   end
 
   %error in radius, if robot is within this error, it drives straight
-  error = 0.2;
+  error = 1;
   if x >= 0
     if y == 0
       %instructions for line(x>=0,y==0)
