@@ -1,7 +1,7 @@
 % Code for webots that instructs the bot to move forward to a surface
 % then follow the edge of that surface avoid objects
 
-TIME_STEP = 64;
+time_step = 0.1;
 direction = 'None';        % Direction for the current frame
 speed = 4;                 % General speed of the robot.
 default_dist = 120;        % Closer to wall <=> Bigger number
@@ -43,14 +43,14 @@ tic;
 while ~strcmp(direction, 'Stop') 
   sensor_values = readIR(s);
   counts = readCounts(s);
-  left = (counts(1)-old_count_left)*0.0001/0.01;
-  right = (counts(2)-old_count_right)*0.0001/0.01;
+  left = (counts(1)-old_count_left)*0.0001/time_step;
+  right = (counts(2)-old_count_right)*0.0001/time_step;
 
   new_position = odometery(x,y,angle,left,right);
 
   x = new_position(1);
   y = new_position(2);
-  angle = new_position(3)
+  angle = new_position(3);
   [x,y]
 
   %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
@@ -59,8 +59,8 @@ while ~strcmp(direction, 'Stop')
   dist = sensor_values(6);
 
   %Check how much time has past and if it is time to go home
-  if toc >= 60 
-    go_home = 1
+  if toc >= 5 
+    go_home = 1;
   end
 
   %Before an object is found, move forwards
@@ -97,7 +97,8 @@ while ~strcmp(direction, 'Stop')
     direction = 'PID Control';
 
   elseif go_home
-   direction = home_direction(y,x,angle);
+   disp('Going Home!')
+   direction = home_direction(x,y,angle);
   end
 
 
@@ -167,7 +168,7 @@ while ~strcmp(direction, 'Stop')
         v = 7;
       end
       if v < -7
-        v = -7
+        v = -7;
       end
 
       if ~(current_motion(1) == speed+v && current_motion(2) == speed+v)
@@ -191,7 +192,7 @@ while ~strcmp(direction, 'Stop')
   n = n + 1;
 
 
-  pause(0.01);
+  pause(time_step);
 
 
 
