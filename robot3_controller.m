@@ -24,6 +24,8 @@ contact_x = 0;             %x postion of first contact with surface
 contact_y = 0;             %y position of first contact with surface
 contact_returned = 0;      %Returned to either start on first contact point
 returned = 0;              %Returned to original position 
+old_count_left = 0;
+old_count_right = 0;
 
 
 delete(instrfindall)
@@ -37,10 +39,10 @@ desktop;
 % Main loop:
 % Perform simulation steps of TIME_STEP milliseconds
 while 1
-  sensor_values = readIR(s)
+  sensor_values = readIR(s);
   counts = readCounts(s);
-  left = counts(1)*0.00008/0.1;
-  right = counts(2)*0.00008/0.1;
+  left = (counts(1)-old_count_left)*0.0001/0.1;
+  right = (counts(2)-old_count_right)*0.0001/0.1;
 
   new_position = odometery(x,y,angle,left,right);
 
@@ -168,10 +170,12 @@ while 1
       disp(['Something wrong! Recieved command: ' direction])
   end
 
-  setCounts(s,0,0);
-
-  [vleft, vright]
   setSpeeds(s, vleft, vright);
+
+  %setCounts(s,0,0);
+  old_count = readCounts(s);
+  old_count_left = old_count(1);
+  old_count_right = old_count(2);
 
   n = n + 1;
 
