@@ -59,7 +59,7 @@ while ~strcmp(direction, 'Stop')
   dist = sensor_values(6);
 
   %Check how much time has past and if it is time to go home
-  if toc >= 5 
+  if toc >= 50 
     go_home = 1;
   end
 
