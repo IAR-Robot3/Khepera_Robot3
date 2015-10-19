@@ -6,8 +6,8 @@ direction = 'None';        % Direction for the current frame
 speed = 4;                 % General speed of the robot.
 default_dist = 120;        % Closer to wall <=> Bigger number
 Kp = 9/default_dist;      % Parameter for P control
-Ki = -2/default_dist;       % Parameter for PI control
-Kd = 4/default_dist;      % Parameter for PD control
+Ki = 2/default_dist;       % Parameter for PI control
+Kd = -4/default_dist;      % Parameter for PD control
 prev_errors = zeros(1,100); % Used for PI control
 steps = 1:length(prev_errors);
 found = 0;                 %If the robat has reached a surface or not 
@@ -51,7 +51,10 @@ while ~strcmp(direction, 'Stop')
   x = new_position(1);
   y = new_position(2);
   angle = new_position(3);
-  [x,y]
+
+  %hold on
+  %plot(x,y,'-o')
+  %hold off
 
   %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
 
@@ -59,7 +62,7 @@ while ~strcmp(direction, 'Stop')
   dist = sensor_values(6);
 
   %Check how much time has past and if it is time to go home
-  if toc >= 50 
+  if toc >= 30 
     go_home = 1;
   end
 
@@ -98,7 +101,7 @@ while ~strcmp(direction, 'Stop')
 
   elseif go_home
    disp('Going Home!')
-   direction = home_direction(x,y,angle);
+   direction = 'Stop'
   end
 
 
@@ -112,6 +115,7 @@ while ~strcmp(direction, 'Stop')
       current_motion = [speed, speed];
     end
   elseif strcmp(direction, 'Left Turn')
+      [x,y]
     if ~(current_motion(1) == -speed && current_motion(2) == speed)
       %setSpeeds(s, -speed, speed)
       vleft = -speed;
@@ -119,6 +123,8 @@ while ~strcmp(direction, 'Stop')
       disp('Left Turn!')
       current_motion = [-speed, speed];
     end
+    [left,right];
+    [vleft,vright];
   elseif strcmp(direction, 'Right Turn')
     if ~(current_motion(1) == speed && current_motion(2) == -speed)
       %setSpeeds(s, speed, -speed)
@@ -177,7 +183,7 @@ while ~strcmp(direction, 'Stop')
         vleft = speed+v;
         vright = speed-v;
       end
-      disp('PID Control!')
+      %disp('PID Control!')
   else
       disp(['Something wrong! Recieved command: ' direction])
   end

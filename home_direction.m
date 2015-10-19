@@ -10,8 +10,9 @@ function direction = home_direction(x,y,bot_angle)
 
   %error in radius, if robot is within this error, it drives straight
   error = 0.5;
-  home_angle = wrapTo2Pi(atan2(x,y));
+  home_angle = wrapTo2Pi(pi/2 - atan2(x,y));
   thresh_angle = wrapTo2Pi(home_angle + bot_angle + pi/2);
+  [home_angle, thresh_angle]
 
   diff = wrapTo2Pi(2*pi - thresh_angle);
   if diff <= error || diff >= (2*pi - error)
