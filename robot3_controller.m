@@ -51,11 +51,11 @@ while ~strcmp(direction, 'Stop')
   y = new_position(2);
   angle = new_position(3);
 
-  [x*10, y*10];
-  radtodeg(angle)
+  [x, y];
+  angle;
 
   hold on
-  plot(x*10,y*10)
+  plot(x,y, 'ro')
   hold off
 
   %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
@@ -64,7 +64,7 @@ while ~strcmp(direction, 'Stop')
   dist = sensor_values(6);
 
   %Check how much time has past and if it is time to go home
-  if toc >= 50 
+  if toc >= 10 
     go_home = 1;
   end
 

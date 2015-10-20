@@ -6,5 +6,5 @@ counts = readCounts(s);
 new_count_left = counts(1);
 new_count_right = counts(2);
 
-left_v = (counts(1)-old_count_left)*0.00008/time_step;
-right_v = (counts(2)-old_count_right)*0.00008/time_step;
+left_v = (counts(1)-old_count_left)*0.15;
+right_v = (counts(2)-old_count_right)*0.15;

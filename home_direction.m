@@ -2,7 +2,7 @@
 %find angle to home direction and use this to decide which direction to turn at any
 %given point. Need specific instructions for cases where y = 0.
 function direction = home_direction(x,y,bot_angle)
-  if (abs(x) <= 0.01 && abs(y) <= 0.01)
+  if (abs(x) <= 5 && abs(y) <= 5)
     direction = 'Stop';
     disp('I made it home!')
     return
@@ -18,7 +18,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T < pi
-        direction = 'Right Turn';
+        direction = 'Right Curve';
       elseif T >= pi
         direction = 'Left Turn';
       end
@@ -27,7 +27,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Turn';
+        direction = 'Right Curve';
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -38,7 +38,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Turn';
+        direction = 'Right Curve';
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -47,7 +47,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Turn';
+        direction = 'Right Curve';
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -61,7 +61,7 @@ function direction = home_direction(x,y,bot_angle)
   %elseif thresh_angle <= pi
   %  direction = 'Left Turn';
   %elseif thresh_angle > pi
-  %  direction = 'Right Turn';
+  %  direction = 'Right Curve';
   %else
   %  direction = 'Stop';
   %  disp(['Unexpected error occured with values: bot_angle='  num2str(bot_angle) ', x=' num2str(x) ', y=' num2str(y) ', home_angle=' num2str(home_angle) ', diff=' num2str(diff)])

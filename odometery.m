@@ -1,9 +1,9 @@
 function new_position = odometery(X,Y,theta,left,right)
 % Calculates the new position of the robot
 
-new_theta = wrapTo2Pi(theta - 0.5*((left-right)/0.052));
+new_theta = wrapTo2Pi(theta - 0.5*(left-right)/52);
 
-%c1 = theta - 0.5*((left-right)/0.052);
+%c1 = theta - 0.5*((left-right)/52);
 %c2 = (c1 + theta)/2;
 
 new_X = X + (0.5*(left+right)*cos(new_theta));
