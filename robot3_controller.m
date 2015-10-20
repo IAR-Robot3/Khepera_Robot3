@@ -42,19 +42,21 @@ desktop;
 tic;
 while ~strcmp(direction, 'Stop') 
   sensor_values = readIR(s);
-  counts = readCounts(s);
-  left = (counts(1)-old_count_left)*0.0001/time_step;
-  right = (counts(2)-old_count_right)*0.0001/time_step;
+  
+  [left_v, right_v, old_count_left, old_count_right] = wheel_speeds(s, old_count_left, old_count_right, time_step);
 
-  new_position = odometery(x,y,angle,left,right);
+  new_position = odometery(x,y,angle,left_v,right_v);
 
   x = new_position(1);
   y = new_position(2);
   angle = new_position(3);
 
-  %hold on
-  %plot(x,y,'-o')
-  %hold off
+  [x*10, y*10];
+  radtodeg(angle)
+
+  hold on
+  plot(x*10,y*10)
+  hold off
 
   %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
 
@@ -62,7 +64,7 @@ while ~strcmp(direction, 'Stop')
   dist = sensor_values(6);
 
   %Check how much time has past and if it is time to go home
-  if toc >= 30 
+  if toc >= 50 
     go_home = 1;
   end
 
@@ -101,7 +103,7 @@ while ~strcmp(direction, 'Stop')
 
   elseif go_home
    disp('Going Home!')
-   direction = 'Stop'
+   direction = home_direction(x,y,angle);
   end
 
 
@@ -115,7 +117,7 @@ while ~strcmp(direction, 'Stop')
       current_motion = [speed, speed];
     end
   elseif strcmp(direction, 'Left Turn')
-      [x,y]
+    direction;
     if ~(current_motion(1) == -speed && current_motion(2) == speed)
       %setSpeeds(s, -speed, speed)
       vleft = -speed;
@@ -191,9 +193,9 @@ while ~strcmp(direction, 'Stop')
   setSpeeds(s, vleft, vright);
 
   %setCounts(s,0,0);
-  old_count = readCounts(s);
-  old_count_left = old_count(1);
-  old_count_right = old_count(2);
+  %old_count = readCounts(s);
+  %old_count_left = old_count(1);
+  %old_count_right = old_count(2);
 
   n = n + 1;
 
