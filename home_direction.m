@@ -1,4 +1,4 @@
-%Using inverse tangent we
+%Split into quadrants. Using inverse tangent we
 %find angle to home direction and use this to decide which direction to turn at any
 %given point. Need specific instructions for cases where y = 0.
 function direction = home_direction(x,y,bot_angle)
@@ -9,19 +9,60 @@ function direction = home_direction(x,y,bot_angle)
   end
 
   %error in radius, if robot is within this error, it drives straight
-  error = 0.5;
-  home_angle = wrapTo2Pi(pi/2 - atan2(x,y));
-  thresh_angle = wrapTo2Pi(home_angle + bot_angle + pi/2);
-  [home_angle, thresh_angle]
+  error = 0.2;
+  home_angle = abs(pi/2 - abs(atan2(y,x)));
 
-  diff = wrapTo2Pi(2*pi - thresh_angle);
-  if diff <= error || diff >= (2*pi - error)
-    direction = 'Straight';
-  elseif thresh_angle > pi
-    direction = 'Left Turn';
-  elseif thresh_angle <= pi
-    direction = 'Right Turn';
+  if x > 0
+    if y > 0
+      T = wrapTo2Pi(bot_angle + home_angle + pi/2 );
+      if T <= error || T >= (2*pi - error)
+        direction = 'Straight';
+      elseif T < pi
+        direction = 'Right Turn';
+      elseif T >= pi
+        direction = 'Left Turn';
+      end
+    else
+      T = wrapTo2Pi(bot_angle - home_angle - pi/2 );
+      if T <= error || T >= (2*pi - error)
+        direction = 'Straight';
+      elseif T <= pi
+        direction = 'Right Turn';
+      elseif T > pi
+        direction = 'Left Turn';
+      end
+    end
   else
-    direction = 'Stop';
-    disp(['Unexpected error occured with values: bot_angle='  num2str(bot_angle) ', x=' num2str(x) ', y=' num2str(y) ', home_angle=' num2str(home_angle) ', diff=' num2str(diff)])
+    if y > 0
+      T = wrapTo2Pi(bot_angle - home_angle + pi/2 );
+      if T <= error || T >= (2*pi - error)
+        direction = 'Straight';
+      elseif T <= pi
+        direction = 'Right Turn';
+      elseif T > pi
+        direction = 'Left Turn';
+      end
+    else
+      T = wrapTo2Pi(bot_angle + home_angle - pi/2 );
+      if T <= error || T >= (2*pi - error)
+        direction = 'Straight';
+      elseif T <= pi
+        direction = 'Right Turn';
+      elseif T > pi
+        direction = 'Left Turn';
+      end
+    end
   end
+  %thresh_angle = wrapTo2Pi(bot_angle - (pi/2 - home_angle))
+
+  %diff = wrapTo2Pi(pi - thresh_angle);
+  %if diff <= error || diff >= (2*pi - error)
+  %  direction = 'Straight';
+  %elseif thresh_angle <= pi
+  %  direction = 'Left Turn';
+  %elseif thresh_angle > pi
+  %  direction = 'Right Turn';
+  %else
+  %  direction = 'Stop';
+  %  disp(['Unexpected error occured with values: bot_angle='  num2str(bot_angle) ', x=' num2str(x) ', y=' num2str(y) ', home_angle=' num2str(home_angle) ', diff=' num2str(diff)])
+  %end
