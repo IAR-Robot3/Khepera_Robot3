@@ -26,6 +26,11 @@ function robot3_controller(s)
     found = 0;                 %If the robat has reached a surface or not 
     n = 0;                     %Used to count instructions
     current_motion = [0,0];    %Current motion of bot
+    world_map = create_map('arena_scaled_down.jpg');
+    full_world_map = create_map('arena_scaled.jpg');
+    scale = 21.5385;
+    map_starting_place = [61,11];
+    route_waypoints = [];
 
     % Variables for Odometry
     go_food = 0;           %This is set to 1 when it is time to go home
@@ -67,13 +72,19 @@ function robot3_controller(s)
       
 %       positions = [positions; [x,y]];
 
-      [x, y];
+      [x, y]
       angle;
 
-      hold on
-      plot(x,y, 'ro')
-      grid on;
-      hold off
+      %figure(1);
+      %hold on
+      %plot(x,y, 'ro')
+      %grid on;
+      %hold off
+
+
+      %figure(2);
+      %imagesc(world_map);
+      %colormap(flipud(gray));
 
       %[x, y, angle] = [new_position(1), new_position(2), new_position(3)];
 
@@ -93,9 +104,11 @@ function robot3_controller(s)
         number_of_foods = number_of_foods + 1;
         
         if number_of_foods >= 2 && food_number >= 2
+            go(s,0);
             food_number = 0;
             go_food = 0
             go_home = 1
+            route_waypoints = astar_search([x,y],map_starting_place,world_map);
         end
         
         if food_number < 2
