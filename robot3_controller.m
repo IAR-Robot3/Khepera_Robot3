@@ -158,7 +158,13 @@ function robot3_controller(s)
         % disp('Going Home!')
         % If you reached home, then go to food
         
-        direction = home_direction(x,y,angle);
+        next_waypoint - route_waypoints(1,:)
+        if (abs(x-next_waypoint(1)) <= 10 && abs(y-next_waypoint(2)) <= 10)
+          route_waypoints = route_waypoints(2:size(route_waypoints,1),:);
+          next_waypoint - route_waypoints(1,:)
+        end
+        
+        direction = home_direction(x,y,angle,next_waypoint);
         if strcmp(direction, 'Stop')
             food_number = 1;
             led_3_times(s);
