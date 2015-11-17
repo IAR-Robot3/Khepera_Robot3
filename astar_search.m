@@ -16,7 +16,7 @@ function waypoints = astar_search(start,target,MAP)
   j=0;
   x_val = 1;
   y_val = 1;
-  axis([1 floor(MAX_X*scale)+1 1 floor(MAX_Y*scale)+1])
+  axis([floor((0-61)*scale) floor((MAX_X-61)*scale)+1 floor((0-61)*scale) floor((MAX_Y-11)*scale)+1])
   grid on;
   hold on;
   n=0;%Number of Obstacles
@@ -26,11 +26,11 @@ function waypoints = astar_search(start,target,MAP)
 
   xTarget=target(1);%X Coordinate of the Target
   yTarget=target(2);%Y Coordinate of the Target
-  plot(floor(target(1)*scale)+.5,floor(target(2)*scale)+.5,'gd');
+  plot(floor((target(1)-61)*scale)+.5,floor((target(2)-11)*scale)+.5,'gd');
 
   xStart = start(1);
   yStart = start(2);
-  plot(floor(start(1)*scale)+.5,floor(start(2)*scale)+.5,'bo');
+  plot(floor((start(1)-61)*scale)+.5,floor((start(2)-11)*scale)+.5,'bo');
   axis xy;
 
   OPEN = [];
@@ -160,14 +160,14 @@ if ( (xval == xTarget) && (yval == yTarget))
 
  %Plot the Optimal Path!
  j = size(Optimal_path,1);
- p=plot(floor(Optimal_path(j,1)*scale)+.5,floor(Optimal_path(j,2)*scale)+.5,'bo');
+ p=plot(floor((Optimal_path(j,1)-61)*scale)+.5,floor((Optimal_path(j,2)-11)*scale)+.5,'bo');
  j=j-1;
  for i=j:-1:1
   pause(.25);
-  set(p,'XData',floor(Optimal_path(i,1)*scale)+.5,'YData',floor(Optimal_path(i,2)*scale)+.5);
+  set(p,'XData',floor((Optimal_path(i,1)-61)*scale)+.5,'YData',floor((Optimal_path(i,2)-11)*scale)+.5);
  drawnow ;
  end;
- plot(floor(Optimal_path(:,1)*scale)+.5,floor(Optimal_path(:,2)*scale)+.5);
+ plot(floor((Optimal_path(:,1)-61)*scale)+.5,floor((Optimal_path(:,2)-11)*scale)+.5);
  else
   pause(1);
   h=msgbox('Sorry, No path exists to the Target!','warn');
@@ -181,5 +181,7 @@ if ( (xval == xTarget) && (yval == yTarget))
  for i = 2:size(waypoints,1)
    waypoints(i,:) = Optimal_path((i-1)*8,:);
  end
+ waypoints(:,1) = waypoints(:,1) - 61;
+ waypoints(:,2) = waypoints(:,2) - 11;
  waypoints = floor(waypoints*scale);
  plot(waypoints(:,1),waypoints(:,2),'ro')
