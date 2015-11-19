@@ -1,7 +1,7 @@
 %Split into quadrants. Using inverse tangent we
 %find angle to home direction and use this to decide which direction to turn at any
 %given point. Need specific instructions for cases where y = 0.
-function direction = home_direction(x,y,bot_angle,target)
+function direction = home_direction(x,y,bot_angle,s,target)
   x = x - target(1);
   y = y - target(2);
   if (abs(x) <= 10 && abs(y) <= 10)

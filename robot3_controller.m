@@ -181,7 +181,7 @@ function robot3_controller(s)
           next_waypoint - route_waypoints(1,:)
         end
         
-        direction = home_direction(x,y,angle,next_waypoint);
+        direction = home_direction(x,y,angle,s,next_waypoint);
         if strcmp(direction, 'Stop')
             food_number = 1;
             go_home = 0
