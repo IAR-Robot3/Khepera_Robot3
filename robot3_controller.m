@@ -4,12 +4,16 @@ function robot3_controller(s)
     
     food_poses = [];   % This is going to store the list of positions of food places 
     number_of_foods = 0;
-    food_number = 0;
+    food_number = 1;
     plot(0,0,'--gs',...   % Draw home
     'LineWidth',2,...
     'MarkerSize',10,...
-    'MarkerEdgeColor','b')
+    'MarkerEdgeColor','g')
 
+
+    positions = [];  %Stores all positions
+    route_home_to_1 = [];
+    route_1_to_2 = [];
     time_step = 0.1;
     direction = 'None';        % Direction for the current frame
     speed = 4;                 % General speed of the robot.
@@ -60,6 +64,8 @@ function robot3_controller(s)
       x = new_position(1);
       y = new_position(2);
       angle = new_position(3);
+      
+%       positions = [positions; [x,y]];
 
       [x, y];
       angle;
@@ -86,20 +92,31 @@ function robot3_controller(s)
       if foodFlag == 1
         number_of_foods = number_of_foods + 1;
         
-        if food_number < 2
-            food_number = food_number + 1;
-        end
-        
         if number_of_foods >= 2 && food_number >= 2
             food_number = 0;
             go_food = 0
             go_home = 1
         end
+        
+        if food_number < 2
+            food_number = food_number + 1;
+        end
+        
+
         disp('Food found!');
         disp(toc)
         foodFlag = 0; % Reset flag
         food_pos = [x,y];
-        food_poses =  [food_poses; food_pos]
+%         size(positions)
+%         size(positions,1)
+%         route = routes(positions);
+%         if food_number == 1
+%            route_home_to_1 = route;
+%         else
+%            route_1_to_2 = route;
+%         end
+%         positions = []
+        food_poses =  food_memory_correction(food_poses,food_pos)
         hold on
         plot(food_pos(1),food_pos(2),'--gs',...
         'LineWidth',2,...
@@ -145,13 +162,11 @@ function robot3_controller(s)
         % disp('Going Home!')
         % If you reached home, then go to food
         
-        direction = home_direction(x,y,angle);
+        direction = home_direction(x,y,angle,s);
         if strcmp(direction, 'Stop')
             food_number = 1;
-            led_3_times(s);
             go_home = 0
             go_food = 1
-            direction = 'Straight';
         end
         
        

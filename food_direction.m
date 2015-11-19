@@ -1,5 +1,5 @@
 %Split into quadrants. Using inverse tangent we
-%find angle to home direction and use this to decide which direction to turn at any
+%find angle to food direction and use this to decide which direction to turn at any
 %given point. Need specific instructions for cases where y = 0.
 function direction = food_direction(x,y,bot_angle,x_food,y_food)
 
@@ -20,6 +20,13 @@ function direction = food_direction(x,y,bot_angle,x_food,y_food)
   %error in radius, if robot is within this error, it drives straight
   error = 0.2;
   food_angle = abs(pi/2 - abs(atan2(delta_y,delta_x)));
+  
+  r = floor(9*rand);
+  if r > 6
+      random_direction = 'Right Turn';
+  else
+      random_direction = 'Right Curve';
+  end
 
   if x > x_food
     if y > y_food
@@ -27,7 +34,7 @@ function direction = food_direction(x,y,bot_angle,x_food,y_food)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T < pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T >= pi
         direction = 'Left Turn';
       end
@@ -36,7 +43,7 @@ function direction = food_direction(x,y,bot_angle,x_food,y_food)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -47,7 +54,7 @@ function direction = food_direction(x,y,bot_angle,x_food,y_food)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -56,7 +63,7 @@ function direction = food_direction(x,y,bot_angle,x_food,y_food)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end

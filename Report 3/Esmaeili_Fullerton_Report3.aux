@@ -1,0 +1,34 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methods}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Exploration}{2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces On the left you can see the positions of the 8 IR sensors in a Khepera robot. On the right, you can see the bahavoiur of our robot near obstacles}}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Food collection}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Navigation}{3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Here is an example of A* algorithm generated on a test map. The two blue points indicates the start and target point, and the green line indicates the optimal path.}}{3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The actual lab environment of the robot, as well as the image used for segmentation with all the obstacles covered in black.}}{4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Some examples of A* search tested in the map of the arena.}}{5}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Advantages}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces If the robot is not within 10cm radius of the food item, it follows a direct path to the food item. Once it finds itself within the area, it randomly curves to left and right (with equal probability), until the demonstrator signals that it hit the food item.}}{7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Weaknesses and Improvements}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces A situation that the robot might get stuck in an infinite loop.}}{8}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Appendix}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Start}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{../start.m}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Main Controller}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{../robot3\textunderscore controller.m}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces In this situation, even though food items 1 and 2 are the closest foods to the nest, it is more optimal to collect the third closest food (number 3) in combination with food item 1. This will result in significant improvement in time for a fixed number of food collection. An even more optimal approach might be to collect all three items before coming to the nest. In other words, adjusting the number of foods to carry home if two of the location are reasonably close to each other.}}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Wheels Speed}{15}}
+\@writefile{lol}{\contentsline {lstlisting}{../wheel\textunderscore speeds.m}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Odometry}{15}}
+\@writefile{lol}{\contentsline {lstlisting}{../odometery.m}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Finding Home}{15}}
+\@writefile{lol}{\contentsline {lstlisting}{../home\textunderscore direction.m}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Finding Food}{17}}
+\@writefile{lol}{\contentsline {lstlisting}{../food\textunderscore direction.m}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Food choosing}{18}}
+\@writefile{lol}{\contentsline {lstlisting}{../food\textunderscore memory\textunderscore correction.m}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Flash LED}{19}}
+\@writefile{lol}{\contentsline {lstlisting}{../led\textunderscore 3\textunderscore times.m}{19}}

@@ -1,10 +1,11 @@
 %Split into quadrants. Using inverse tangent we
 %find angle to home direction and use this to decide which direction to turn at any
 %given point. Need specific instructions for cases where y = 0.
-function direction = home_direction(x,y,bot_angle)
+function direction = home_direction(x,y,bot_angle,s)
   if (abs(x) <= 10 && abs(y) <= 10)
     direction = 'Stop';
     disp('I made it home!')
+    led_3_times(s);
     return
   end
 
@@ -12,13 +13,20 @@ function direction = home_direction(x,y,bot_angle)
   error = 0.2;
   home_angle = abs(pi/2 - abs(atan2(y,x)));
 
+  r = floor(9*rand);
+  if r > 6
+      random_direction = 'Right Turn';
+  else
+      random_direction = 'Right Curve';
+  end
+  
   if x > 0
     if y > 0
       T = wrapTo2Pi(bot_angle + home_angle + pi/2 );
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T < pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T >= pi
         direction = 'Left Turn';
       end
@@ -27,7 +35,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -38,7 +46,7 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end
@@ -47,12 +55,13 @@ function direction = home_direction(x,y,bot_angle)
       if T <= error || T >= (2*pi - error)
         direction = 'Straight';
       elseif T <= pi
-        direction = 'Right Curve';
+        direction = random_direction;
       elseif T > pi
         direction = 'Left Turn';
       end
     end
   end
+end
   %thresh_angle = wrapTo2Pi(bot_angle - (pi/2 - home_angle))
 
   %diff = wrapTo2Pi(pi - thresh_angle);
