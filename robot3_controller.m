@@ -26,10 +26,10 @@ function robot3_controller(s)
     found = 0;                 %If the robat has reached a surface or not 
     n = 0;                     %Used to count instructions
     current_motion = [0,0];    %Current motion of bot
-    world_map = create_map('arena_scaled_down.jpg');
+    world_map = create_map('arena_scaled_down3.jpg');
     full_world_map = create_map('arena_scaled.jpg');
-    scale = 21.5385;
-    map_starting_place = [61,11];
+    scale = 103.6000;
+    map_starting_place = [1200,200];
     route_waypoints = [];
 
     % Variables for Odometry
